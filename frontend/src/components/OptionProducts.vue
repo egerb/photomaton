@@ -1,50 +1,60 @@
 <template>
-  <div class="optional-products">
-    <!--  Header for category optional products  -->
-    <h3 class="text-h5 mb-4">Select Additional Products</h3>
-    <p class="text-subtitle-1 mb-6">Please select at least one optional product to continue</p>
+  <!-- Component Wrapper -->
+  <div id="app" class="optional-products">
+    <!-- Header for Carousel Category -->
+    <div class="d-flex align-center mb-4">
+      <h4 class="text-h6 mr-2">{{ categories[0].name }}</h4>  <!-- Category Name -->
+      <v-chip
+        :color="categories[0].required ? 'error' : 'info'"
+        size="small"
+        class="text-caption"
+      >
+        {{ categories[0].required ? 'Required' : 'Optional' }}
+      </v-chip>
+    </div>
+    <!-- Carousel for Category 0 -->
+    <div class="carousel-container">
+      <!-- Scroll Left Button -->
+      <v-btn
+        icon="mdi-chevron-left"
+        variant="text"
+        class="scroll-btn prev"
+        @click="scroll('prev')"
+      ></v-btn>
 
-    <!--  Iterate categories and display ech other  -->
-    <div v-for="(category, categoryIndex) in categories" :key="categoryIndex" class="category-section">
-      <h4 class="text-h6 mb-3">{{ category.name }}</h4>
-
-      <!--   Render items in the category   -->
-      <v-row>
-        <v-col
-          v-for="(item, itemIndex) in category.items"
+      <!-- Carousel Items Container -->
+      <div class="carousel" ref="carousel">
+        <!-- Loop through each item in the category -->
+        <div
+          v-for="(item, itemIndex) in categories[0].items"
           :key="itemIndex"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
+          class="carousel-item"
         >
-          <!--    Product card selection on click      -->
+          <!-- Card for each product in the carousel -->
           <v-card
-            :class="{ 'selected': isSelected(item) }"
-            @click="toggleSelection(item)"
-            elevation="2"
+            id="app"
+            :class="{
+                  'selected': isSelectedRequired(item),
+                  'disabled': isDisabledRequired(item, categories[0])
+                }"
+            @click="toggleSelection(item, categories[0])"
+            elevation="1"
             class="product-card"
           >
-            <!--    Image on the product card        -->
+            <!-- product image -->
             <v-img
               :src="item.image"
               :alt="item.title"
               height="200"
               cover
-              class="product-image"
-            >
-              <template v-slot:placeholder>
-                <v-row align="center" justify="center" class="fill-height">
-                  <!-- <v-progress-circular indeterminate color="primary"></v-progress-circular>-->
-                </v-row>
-              </template>
-            </v-img>
+              :eager="true"
+            />
 
-            <!--    Title and price product        -->
+            <!-- product title and price -->
             <v-card-title class="text-subtitle-1">{{ item.title }}</v-card-title>
             <v-card-subtitle>{{ item.price }}</v-card-subtitle>
 
-            <!--    Overlay to indicate the item is selected         -->
+            <!-- overlay for selected item -->
             <v-overlay
               :model-value="isSelected(item)"
               contained
@@ -52,118 +62,642 @@
               scrim="#033358"
               persistent
             >
-              <v-icon
-                color="white"
-                size="24"
-                icon="mdi-check-circle"
-              ></v-icon>
+              <v-icon color="white" size="24" icon="mdi-check-circle"></v-icon>
             </v-overlay>
           </v-card>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
+
+      <!-- scroll right button -->
+      <v-btn
+        icon="mdi-chevron-right"
+        variant="text"
+        class="scroll-btn next"
+        @click="scroll('next')"
+      ></v-btn>
     </div>
-    <!-- Error alert shown when items are not selected-->
+    <!-- Non-Carousel Categories -->
+    <div v-for="(category, categoryIndex) in categories" :key="categoryIndex" class="category-section mb-8">
+      <div v-if="category.id !== 0">
+        <!-- category header with name and required/optional badge -->
+        <div class="d-flex align-center mb-4">
+          <h4 class="text-h6 mr-2">{{ category.name }}</h4>
+          <v-chip
+            :color="category.required ? 'error' : 'info'"
+            size="small"
+            class="text-caption"
+          >
+            {{ category.required ? 'Required' : 'Optional' }}
+          </v-chip>
+        </div>
+
+        <!-- Product Grid -->
+        <div>
+          <v-row>
+            <v-col
+              v-for="(item, itemIndex) in category.items"
+              :key="itemIndex"
+              cols="12"
+              sm="6"
+              md="4"
+              lg="3"
+            >
+              <!-- Product Card -->
+              <v-card
+                id="app"
+                :class="{
+              'selected': isSelected(item),
+              'disabled': isDisabled(item, category)
+            }"
+                @click="toggleSelection(item, category)"
+                elevation="1"
+                class="product-card"
+              >
+                <!-- product image -->
+                <v-img
+                  :src="item.image"
+                  :alt="item.title"
+                  height="200"
+                  cover
+                  :eager="true"
+                />
+
+                <!-- product title and price -->
+                <v-card-title class="text-subtitle-1">{{ item.title }}</v-card-title>
+                <v-card-subtitle>{{ item.price }}</v-card-subtitle>
+
+                <!-- overlay for selected item -->
+                <v-overlay
+                  :model-value="isSelected(item)"
+                  contained
+                  class="align-center justify-center"
+                  scrim="#033358"
+                  persistent
+                >
+                  <v-icon color="white" size="24" icon="mdi-check-circle"></v-icon>
+                </v-overlay>
+              </v-card>
+            </v-col>
+          </v-row>
+        </div>
+      </div>
+    </div>
+
+    <!-- validation Alert for invalid selections -->
     <v-alert
-      v-if="showError"
-      type="error"
-      class="mt-4"
-      text="Please select at least one optional product"
-    ></v-alert>
+      v-if="validationMessage"
+      :type="alertType"
+      :text="validationMessage"
+      class="my-3"
+      variant="tonal"
+    />
+
+    <!-- cartTotal Component -->
+    <CartTotal
+      :items="selectedItems"
+      :carousel-item="carouselSelection"
+      :mandatory-category-id="1"
+      :is-valid="isValid"
+      :validation-message="validationMessage"
+      :alert-type="alertType"
+      @remove-item="handleRemoveItem"
+      @next="handleNext"
+      @previous="$emit('previous-step')"
+    />
   </div>
 </template>
 
 <script>
+import CartTotal from './CartTotal.vue';
+import Carousel from "@/components/Carousel.vue";
+import {th} from "vuetify/locale";
+
 export default {
   name: 'OptionProducts',
+
+  components: {
+    Carousel,
+    CartTotal
+  },
+
   data() {
     return {
-      selectedItems: [], //store the list of selected items
-      showError: false, //visibility of the error message
-      categories: [ //Array of categoires contain items
+      selectedIndex: null,
+      scrollPosition: 0,
+      selectedItems: [],
+      categories: [
         {
-          name: 'Photo Albums',
+          id: 0,
+          name: 'Photomaton',
+          required: true,
           items: [
             {
-              id: 1,
-              title: 'Mini Album',
-              price: '€29.99',
-              image: '/images/mini-album.jpg',
+              title: 'Photomaton Vintage',
+              price: '620 €',
+              image: './public/PhotomatonVintage.png',
+              categoryId: 0,
+              id: 0
             },
             {
-              id: 2,
-              title: 'Digital Copy',
-              price: '€19.99',
-              image: '/images/digital-copy.jpg',
+              title: 'Photomaton Retro',
+              price: '620 €',
+              image: '/public/PhotomatonRetro.png',
+              categoryId: 0,
+              id: 1
+            },
+            {
+              title: 'Photomaton Glam',
+              price: '690 €',
+              image: '/public/PhotomatonGlam.png',
+              categoryId: 0,
+              id: 2
+            },
+            {
+              title: 'Espejo',
+              price: '720 €',
+              image: '/public/PhotomatonEspejo.png',
+              categoryId: 0,
+              id: 3
+            },
+            {
+              title: '360 Grados',
+              price: '760 €',
+              image: '/public/Photomaton360grados.png',
+              categoryId: 0,
+              id: 4
+            },
+            {
+              title: 'Glambot',
+              price: '900 €',
+              image: '/public/GlamBot.png',
+              categoryId: 0,
+              id: 5
+            },
+            {
+              title: 'Photobus',
+              price: '1200 €',
+              image: '/public/Photobus.png',
+              categoryId: 0,
+              id: 6
+            },
+            {
+              title: 'Deco & Diversion Extra',
+              price: '200 €',
+              image: '/public/Deco-DiversionExtra.png',
+              categoryId: 0,
+              id: 7
+            }
+          ],
+        },
+        {
+          id: 1,
+          name: 'FONDOS Y DECORADOS',
+          required: true,
+          items: [
+            {
+              id: 8,
+              title: 'PHOTOCALL LUNARES',
+              price: '0 €',
+              image: '/public/photocall_lunares.png',
+              categoryId: 1
+            },
+            {
+              id: 9,
+              title: 'CHESTER VERDE + HEXÁGONO',
+              price: '+56 €',
+              image: '/public/Chester_verde_hexagono.png',
+              categoryId: 1
+            },
+            {
+              id: 10,
+              title: 'CORAZONES',
+              price: '+48 €',
+              image: '/public/Corazones.jpg',
+              categoryId: 1
+            },
+            {
+              id: 11,
+              title: 'FONDO DISCOTECA',
+              price: '+56 €',
+              image: '/public/Fondo_discoteca.png',
+              categoryId: 1
+            },
+
+          ],
+        },
+        {
+          id: 2,
+          name: 'Albums',
+          required: true,
+          items: [
+            {
+              id: 12,
+              title: 'ÁLBUM TURQUESA',
+              price: '0 €',
+              image: '/public/turquesa.png',
+              categoryId: 2
+            },
+            {
+              id: 13,
+              title: 'ÁLBUM SERRAJE NEGRO',
+              price: '+56 €',
+              image: '/public/Album_serraje_negro.png',
+              categoryId: 2
+            },
+            {
+              id: 14,
+              title: 'ÁLBUM OLIVIA',
+              price: '+48 €',
+              image: '/public/2_A_lbum_Olivia.png',
+              categoryId: 2
+            },
+            {
+              id: 15,
+              title: 'ÁLBUM SERRAJE DORADO',
+              price: '+56 €',
+              image: '/public/serrajedorado.png',
+              categoryId: 2
+            },
+
+          ],
+        },
+        {
+          id: 3,
+          name: 'PLANTILLAS PARA LAS FOTOS',
+          required: true,
+          items: [
+            {
+              id: 16,
+              title: 'Clásica 10x15 cm',
+              price: '0 €',
+              image: '/public/Rocio_5x15.png',
+              categoryId: 3
+            },
+            {
+              id: 17,
+              title: 'Tira 5x15 cm',
+              price: '0 €',
+              image: '/public/Rocio_10x15.png',
+              categoryId: 3
             },
           ],
         },
         {
-          name: 'Accessories',
+          id: 4,
+          name: 'ATREZZO',
+          required: false,
           items: [
             {
-              id: 3,
-              title: 'Custom Box',
-              price: '€39.99',
-              image: '/images/custom-box.jpg',
+              id: 18,
+              title: 'ATREZZO',
+              price: '0 €',
+              image: '/public/atrezzo_2023(1).jpg',
+              categoryId: 4
             },
             {
-              id: 4,
-              title: 'Photo Frame',
-              price: '€24.99',
-              image: '/images/photo-frame.jpg',
-            },
-          ],
-        },
-        {
-          name: 'Prints',
-          items: [
-            {
-              id: 5,
-              title: 'Premium Prints',
-              price: '€34.99',
-              image: '/images/premium-prints.jpg',
+              id: 19,
+              title: 'SIN ATREZZO',
+              price: '0 €',
+              image: '/public/atrezzo_2023(2).jpg',
+              categoryId: 4
             },
             {
-              id: 6,
-              title: 'Canvas Print',
-              price: '€49.99',
-              image: '/images/canvas-print.jpg',
+              id: 20,
+              title: 'CORONAS',
+              price: '+50 €',
+              image: '/public/atrezzo_2023(3).png',
+              categoryId: 4
+            },
+            {
+              id: 21,
+              title: 'MADERA',
+              price: '+40 €',
+              image: '/public/atrezzo_2023(4).png',
+              categoryId: 4
             },
           ],
         },
       ],
+      requiredIsValid: false,
+      isValid: false,
+      validationMessage: '',
+      alertType: 'warning',
     };
   },
-  // checks if items are selected
   methods: {
+    scroll(direction) {
+      const container = this.$refs.carousel;
+      if (!container) return;
+
+      // Calculate scroll amount based on visible width
+      const visibleWidth = container.clientWidth;
+      const scrollAmount = Math.floor(visibleWidth * 0.8);
+
+      // Get current scroll position
+      const currentScroll = container.scrollLeft;
+      const maxScroll = container.scrollWidth - visibleWidth;
+
+      // Calculate target scroll position
+      let targetScroll;
+      if (direction === 'next') {
+        targetScroll = Math.min(currentScroll + scrollAmount, maxScroll);
+      } else {
+        targetScroll = Math.max(currentScroll - scrollAmount, 0);
+      }
+
+      // Smooth scroll animation
+      this.smoothScroll(container, targetScroll);
+    },
+
+    smoothScroll(element, target) {
+      const start = element.scrollLeft;
+      const distance = target - start;
+      const duration = 150; // milliseconds
+      let startTime = null;
+
+      const animation = currentTime => {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 3);
+
+        // Easing function for smooth animation
+        const easeInOutQuad = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+        element.scrollLeft = start + (distance * easeInOutQuad(progress));
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        } else {
+          // Update buttons after animation completes
+          this.updateScrollButtons();
+        }
+      };
+
+      requestAnimationFrame(animation);
+    },
+
+    updateScrollButtons() {
+      const container = this.$refs.carousel;
+      if (!container) return;
+
+      const threshold = 5; // Small threshold to handle precision issues
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      this.atStart = container.scrollLeft <= threshold;
+      this.atEnd = maxScroll - container.scrollLeft <= threshold;
+    },
+
+    handleResize() {
+      // Debounce resize updates
+      if (this.resizeTimeout) {
+        clearTimeout(this.resizeTimeout);
+      }
+
+      this.resizeTimeout = setTimeout(() => {
+        const container = this.$refs.carousel;
+        if (!container) return;
+
+        // Ensure scroll position is valid after resize
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        if (container.scrollLeft > maxScroll) {
+          container.scrollLeft = maxScroll;
+        }
+
+        this.updateScrollButtons();
+      }, 150);
+    },
+
+
     isSelected(item) {
       return this.selectedItems.some(selected => selected.id === item.id);
     },
-    // add or remove chosen product
-    toggleSelection(item) {
-      const index = this.selectedItems.findIndex(selected => selected.id === item.id);
-      if (index === -1) {
+
+    isDisabled(item, category) {
+      return false;
+    },
+
+    isSelectedRequired(item) {
+      this.requiredIsValid = true
+      return this.selectedItems.some(selected => selected.id === item.id);
+    },
+
+
+    isDisabledRequired(item, category) {
+      this.requiredIsValid = false
+
+      return false;
+    },
+
+    toggleSelection(item, category) {
+      // Find if this specific item is already selected
+      const itemIndex = this.selectedItems.findIndex(
+        selected => selected.id === item.id
+      );
+
+      if (itemIndex === -1) {
+        // Item is not selected, handle new selection
+
+        // Find and remove any existing selection in the same category
+        const existingIndex = this.selectedItems.findIndex(
+          selected => selected.categoryId === category.id
+        );
+        if (existingIndex !== -1) {
+          this.selectedItems.splice(existingIndex, 1);
+        }
+
+        // Add new selection
         this.selectedItems.push(item);
       } else {
-        this.selectedItems.splice(index, 1);
+        // If clicking an already selected item in mandatory category, don't allow deselection
+        if (category.required) {
+          return;
+        }
+        // For optional category, allow deselection
+        this.selectedItems.splice(itemIndex, 1);
       }
+
+      localStorage.setItem("selectedItems", JSON.stringify(this.selectedItems));
+
+      // Ensure price is properly formatted
+      if (typeof item.price === 'string') {
+        item.price = parseFloat(item.price.replace('€', '').replace(',', '.'));
+      }
+
       this.validateSelection();
+    },
+
+    validateSelection() {
+      const hasRequiredCategory = this.validateCategories();
+      const hasCarouselSelection = this.selectedItems.some(item => item.categoryId === 0);
+      const hasPackageSelection = this.selectedItems.some(item => item.categoryId === 1);
+
+      // Update validation state
+      this.isValid = hasRequiredCategory && hasPackageSelection;
+
+      // Set appropriate validation message
+      if (!hasCarouselSelection) {
+        this.validationMessage = 'Please select a photo book from the carousel';
+        this.alertType = 'warning';
+      } else if (!hasPackageSelection) {
+        this.validationMessage = 'Please select a photomaton package';
+        this.alertType = 'warning';
+      } else {
+        this.validationMessage = '';
+        this.alertType = 'success';
+      }
+
+      this.$emit('select-card', this.requiredIsValid);
+      this.$emit('update:valid', this.isValid);
       this.$emit('selection-changed', this.selectedItems);
     },
-    // validate if pruducts <3
-    validateSelection() {
-      const isValid = this.selectedItems.length > 2;
-      this.showError = !isValid;
-      this.$emit('update:valid', isValid);
+
+    validateCategories() {
+      // Check required categories (0 and 1)
+      const requiredCategories = [0, 1]; // Carousel and Photomaton Package
+      return requiredCategories.every(categoryId =>
+        this.selectedItems.some(item => item.categoryId === categoryId)
+      );
     },
+
+
+    handleRemoveItem(item) {
+      const index = this.selectedItems.findIndex(selected => selected.id === item.id);
+      if (index !== -1) {
+        this.selectedItems.splice(index, 1);
+        this.validateSelection(); // Revalidate after removal
+      }
+    },
+
+    handleNext() {
+      const missingSelections = [];
+
+      // Check Photo Book selection (Category 0)
+      if (!this.selectedItems.some(item => item.categoryId === 0)) {
+        missingSelections.push('Photo Book');
+      }
+
+      // Check Photomaton Package selection (Category 1)
+      if (!this.selectedItems.some(item => item.categoryId === 1)) {
+        missingSelections.push('Photomaton Package');
+      }
+
+      if (missingSelections.length > 0) {
+        this.validationMessage = `Please select: ${missingSelections.join(' and ')}`;
+        this.alertType = 'error';
+        return;
+      }
+
+      // All validations passed
+      this.$emit('next-step');
+    },
+
+    restoreSelected() {
+      const selectedItems = localStorage.getItem("selectedItems")
+
+      if (selectedItems) {
+        this.selectedItems = JSON.parse(selectedItems)
+      }
+    }
   },
-  //check chose after validation
   mounted() {
-    this.validateSelection();
+    this.restoreSelected();
+    this.validateSelection(); // Initial validation
+    this.updateScrollButtons();
+    window.addEventListener('resize', this.handleResize);
+    this.resizeTimeout = null;
   },
+  beforeUnmount() {
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+    }
+    window.removeEventListener('resize', this.handleResize);
+  },
+
 };
 </script>
 
 <style scoped>
+.product-card {
+  height: 100%;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.product-card.selected {
+  border-color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.05);
+}
+
+
+.product-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.category-section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 24px;
+}
+
+.category-section:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 600px) {
+  .category-section {
+    padding-bottom: 16px;
+  }
+}
+
+.optional-products {
+  padding-bottom: 24px;
+}
+
+/* ====================
+  Carousel
+==================== */
+
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  margin: 20px 0;
+}
+
+.carousel {
+  display: flex;
+  gap: 25px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 16px 0;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 300px;
+  transition: transform 0.3s ease;
+}
+
+.scroll-btn {
+  position: absolute;
+  z-index: 1;
+}
+
+.scroll-btn.prev {
+  left: 0;
+}
+
+.scroll-btn.next {
+  right: 0;
+}
 
 </style>
+

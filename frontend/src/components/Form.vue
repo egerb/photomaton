@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submit">
+  <form id="app" @submit.prevent="submit">
     <v-text-field
       v-model="form.name"
       :counter="10"
@@ -20,28 +20,37 @@
       label="E-mail"
     ></v-text-field>
 
-    <v-select
-      v-model="form.select"
-      :error-messages="errors.select"
-      :items="items"
-      label="Select"
-    ></v-select>
+    <v-text-field
+      v-model="form.city"
+      :counter="10"
+      :error-messages="errors.city"
+      label="City"
+    ></v-text-field>
+
+    <v-text-field
+      v-model="form.adress"
+      :counter="10"
+      :error-messages="errors.adress"
+      label="Adress"
+    ></v-text-field>
+
 
     <v-checkbox
       v-model="form.checkbox"
       :error-messages="errors.checkbox"
-      label="Option"
+      label="Acepto condiciones y política de datos."
       value="1"
     ></v-checkbox>
 
     <v-btn
+      id="buttons"
       class="me-4"
       type="submit"
     >
       Submit
     </v-btn>
 
-    <v-btn @click="resetForm">
+    <v-btn id="buttons" @click="resetForm">
       Clear
     </v-btn>
   </form>

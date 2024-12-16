@@ -1,38 +1,37 @@
-<template>
-  <v-stepper hide-actions v-model="step" alt-labels :items="['Step 1', 'Step 2', 'Step 3']">
+<template >
+  <v-stepper id="app" hide-actions v-model="step" alt-labels :items="['TU EXPERIENCIA\n', 'DATOS PERSONALES\n', 'DATOS DEL EVENTO']">
     <!-- Step 1: City Selection -->
     <template v-slot:item.1>
-      <v-card title="Step One" flat>
-        <v-form ref="stepForm1" v-model="validStep1">
+      <v-card id="app" title="¿Dónde se va a realizar la boda?" flat>
+        <v-form  ref="stepForm1" v-model="validStep1">
           <SelectCity @input="validateCity"  />
-          <v-btn :disabled="!validStep1" @click="nextStep">Next</v-btn>
+          <v-btn id="buttons" :disabled="!validStep1" @click="nextStep">Next</v-btn>
         </v-form>
       </v-card>
     </template>
 
     <!-- Step 2: Updated with Carousel and OptionalProducts validation -->
     <template v-slot:item.2>
-      <v-card title="Step Two" flat>
-        <Carousel @select-card="handleCardSelection"/>
+      <v-card id="app" title="Step Two" flat>
         <OptionProducts
+          @select-card="handleCardSelection"
           @selection-changed="handleOptionalProductsChange"
           @update:valid="handleOptionalProductsValid"
         />
         <v-form ref="stepForm2" v-model="validStep2">
         </v-form>
-        <v-btn :disabled="!validStep2 || !validOptionalProducts" @click="nextStep">Next</v-btn>
-        <v-btn @click="previousStep">Back</v-btn>
+        <v-btn id="buttons" :disabled="!validStep2 || !validOptionalProducts" @click="nextStep">Next</v-btn>
+        <v-btn id="buttons" @click="previousStep">Back</v-btn>
       </v-card>
     </template>
 
     <!-- Step 3: Form with Validation -->
     <template v-slot:item.3>
-      <v-card title="Step Three" flat>
+      <v-card id="app" title="Completa tus datos" flat>
         <v-form ref="stepForm3" v-model="validStep3">
           <Form @input="validateForm" />
         </v-form>
-        <v-btn @click="previousStep">Back</v-btn>
-        <v-btn :disabled="!validStep3" @click="finish">Finish</v-btn>
+        <v-btn id="buttons" @click="previousStep">Back</v-btn>
       </v-card>
     </template>
   </v-stepper>
@@ -73,9 +72,8 @@ export default {
       const isValid = this.$refs.form.validate();
       this.validStep3 = isValid;
     },
-    handleCardSelection(card) {
-      this.selectedCard = card;
-      this.validStep2 = !!card;
+    handleCardSelection(valid) {
+      this.validStep2 = true;
     },
     handleOptionalProductsChange(selectedItems) {
       this.selectedOptionalProducts = selectedItems;

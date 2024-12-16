@@ -1,6 +1,6 @@
 <template>
   <v-select
-    label="Select a city"
+    label="Select a region"
     :items="['Alicante', 'Barcelona', 'Santander', 'Gjon', 'Madrid']"
     variant="outlined"
     :rules="[v => !!v || 'Please enter a valid city.']"
