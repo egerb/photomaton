@@ -68,9 +68,13 @@ export default {
       this.validStep1 = !!selectedCity;
     },
     validateForm() {
-      // Check validity of Form inputs in Step 3
-      const isValid = this.$refs.form.validate();
-      this.validStep3 = isValid;
+      const formRef = this.$refs.form; // Get the form reference
+      if (formRef) {
+        const isValid = formRef.validate(); // Call validate only if the form exists
+        this.validStep3 = isValid; // Set validation status
+      } else {
+        console.error("Form reference is not available.");
+      }
     },
     handleCardSelection(valid) {
       this.validStep2 = true;

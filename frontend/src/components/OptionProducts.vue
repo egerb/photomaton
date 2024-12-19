@@ -530,9 +530,14 @@ export default {
       const hasRequiredCategory = this.validateCategories();
       const hasCarouselSelection = this.selectedItems.some(item => item.categoryId === 0);
       const hasPackageSelection = this.selectedItems.some(item => item.categoryId === 1);
+      const hasAlbumsSelection = this.selectedItems.some(item => item.categoryId === 2);
+      const hasPhotosSelection = this.selectedItems.some(item => item.categoryId === 3);
 
       // Update validation state
-      this.isValid = hasRequiredCategory && hasPackageSelection;
+      this.isValid = hasRequiredCategory
+        && hasPackageSelection
+        && hasAlbumsSelection
+        && hasPhotosSelection;
 
       // Set appropriate validation message
       if (!hasCarouselSelection) {
@@ -649,7 +654,6 @@ export default {
     padding-bottom: 16px;
   }
 }
-
 .optional-products {
   padding-bottom: 24px;
 }

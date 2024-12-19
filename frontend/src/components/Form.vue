@@ -1,5 +1,5 @@
 <template>
-  <form id="app" @submit.prevent="submit">
+  <form ref="formRef" id="app" @submit.prevent="submit">
     <v-text-field
       v-model="form.name"
       :counter="10"
@@ -28,9 +28,9 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="form.adress"
+      v-model="form.address"
       :counter="10"
-      :error-messages="errors.adress"
+      :error-messages="errors.address"
       label="Adress"
     ></v-text-field>
 
