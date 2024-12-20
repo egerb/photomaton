@@ -194,56 +194,56 @@ export default {
             {
               title: 'Photomaton Vintage',
               price: '620 €',
-              image: './public/PhotomatonVintage.png',
+              image: 'PhotomatonVintage.png',
               categoryId: 0,
               id: 0
             },
             {
               title: 'Photomaton Retro',
               price: '620 €',
-              image: '/public/PhotomatonRetro.png',
+              image: 'PhotomatonRetro.png',
               categoryId: 0,
               id: 1
             },
             {
               title: 'Photomaton Glam',
               price: '690 €',
-              image: '/public/PhotomatonGlam.png',
+              image: 'PhotomatonGlam.png',
               categoryId: 0,
               id: 2
             },
             {
               title: 'Espejo',
               price: '720 €',
-              image: '/public/PhotomatonEspejo.png',
+              image: 'PhotomatonEspejo.png',
               categoryId: 0,
               id: 3
             },
             {
               title: '360 Grados',
               price: '760 €',
-              image: '/public/Photomaton360grados.png',
+              image: 'Photomaton360grados.png',
               categoryId: 0,
               id: 4
             },
             {
               title: 'Glambot',
               price: '900 €',
-              image: '/public/GlamBot.png',
+              image: 'GlamBot.png',
               categoryId: 0,
               id: 5
             },
             {
               title: 'Photobus',
               price: '1200 €',
-              image: '/public/Photobus.png',
+              image: 'Photobus.png',
               categoryId: 0,
               id: 6
             },
             {
               title: 'Deco & Diversion Extra',
               price: '200 €',
-              image: '/public/Deco-DiversionExtra.png',
+              image: 'Deco-DiversionExtra.png',
               categoryId: 0,
               id: 7
             }
@@ -258,28 +258,28 @@ export default {
               id: 8,
               title: 'PHOTOCALL LUNARES',
               price: '0 €',
-              image: '/public/photocall_lunares.png',
+              image: 'photocall_lunares.png',
               categoryId: 1
             },
             {
               id: 9,
               title: 'CHESTER VERDE + HEXÁGONO',
               price: '+56 €',
-              image: '/public/Chester_verde_hexagono.png',
+              image: 'Chester_verde_hexagono.png',
               categoryId: 1
             },
             {
               id: 10,
               title: 'CORAZONES',
               price: '+48 €',
-              image: '/public/Corazones.jpg',
+              image: 'Corazones.jpg',
               categoryId: 1
             },
             {
               id: 11,
               title: 'FONDO DISCOTECA',
               price: '+56 €',
-              image: '/public/Fondo_discoteca.png',
+              image: 'Fondo_discoteca.png',
               categoryId: 1
             },
 
@@ -294,28 +294,28 @@ export default {
               id: 12,
               title: 'ÁLBUM TURQUESA',
               price: '0 €',
-              image: '/public/turquesa.png',
+              image: 'turquesa.png',
               categoryId: 2
             },
             {
               id: 13,
               title: 'ÁLBUM SERRAJE NEGRO',
               price: '+56 €',
-              image: '/public/Album_serraje_negro.png',
+              image: 'Album_serraje_negro.png',
               categoryId: 2
             },
             {
               id: 14,
               title: 'ÁLBUM OLIVIA',
               price: '+48 €',
-              image: '/public/2_A_lbum_Olivia.png',
+              image: '2_A_lbum_Olivia.png',
               categoryId: 2
             },
             {
               id: 15,
               title: 'ÁLBUM SERRAJE DORADO',
               price: '+56 €',
-              image: '/public/serrajedorado.png',
+              image: 'serrajedorado.png',
               categoryId: 2
             },
 
@@ -330,14 +330,14 @@ export default {
               id: 16,
               title: 'Clásica 10x15 cm',
               price: '0 €',
-              image: '/public/Rocio_5x15.png',
+              image: 'Rocio_5x15.png',
               categoryId: 3
             },
             {
               id: 17,
               title: 'Tira 5x15 cm',
               price: '0 €',
-              image: '/public/Rocio_10x15.png',
+              image: 'Rocio_10x15.png',
               categoryId: 3
             },
           ],
@@ -351,28 +351,28 @@ export default {
               id: 18,
               title: 'ATREZZO',
               price: '0 €',
-              image: '/public/atrezzo_2023(1).jpg',
+              image: 'atrezzo_2023(1).jpg',
               categoryId: 4
             },
             {
               id: 19,
               title: 'SIN ATREZZO',
               price: '0 €',
-              image: '/public/atrezzo_2023(2).jpg',
+              image: 'atrezzo_2023(2).jpg',
               categoryId: 4
             },
             {
               id: 20,
               title: 'CORONAS',
               price: '+50 €',
-              image: '/public/atrezzo_2023(3).png',
+              image: 'atrezzo_2023(3).png',
               categoryId: 4
             },
             {
               id: 21,
               title: 'MADERA',
               price: '+40 €',
-              image: '/public/atrezzo_2023(4).png',
+              image: 'atrezzo_2023(4).png',
               categoryId: 4
             },
           ],

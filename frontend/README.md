@@ -68,4 +68,12 @@ yarn build
 
 Once the build process is completed, your application will be ready for deployment in a production environment.
 
+### Deploy to production
 
+```bash
+npm run deploy
+```
+or
+```bash
+yarn run deploy
+```
