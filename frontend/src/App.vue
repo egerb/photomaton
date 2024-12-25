@@ -33,7 +33,6 @@ export default {
   background-color: white;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
-
 #buttons {
   color: black;
   background-color: #79e3d6;
@@ -41,7 +40,12 @@ export default {
   margin-right: 10px;
 }
 
-body {
+.v-stepper-item {
+  padding: 1.5rem 0 1.5rem 0;
+  max-width: 125px;
+}
+
+body{
   background-color: white;
 }
 </style>

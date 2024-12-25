@@ -1,5 +1,5 @@
 <template >
-  <v-stepper id="app" hide-actions v-model="step" alt-labels :items="['TU EXPERIENCIA\n', 'DATOS PERSONALES\n', 'DATOS DEL EVENTO']">
+  <v-stepper id="app" hide-actions v-model="step"  alt-labels :items="['TU EXPERIENCIA\n', 'DATOS PERSONALES\n', 'DATOS DEL EVENTO']">
     <!-- Step 1: City Selection -->
     <template v-slot:item.1>
       <v-card id="app" title="¿Dónde se va a realizar la boda?" flat>
@@ -12,7 +12,7 @@
 
     <!-- Step 2: Updated with Carousel and OptionalProducts validation -->
     <template v-slot:item.2>
-      <v-card id="app" title="Step Two" flat>
+      <v-card id="app" title="Elige algo que se adapte a tu evento." flat>
         <OptionProducts
           @select-card="handleCardSelection"
           @selection-changed="handleOptionalProductsChange"
@@ -28,8 +28,8 @@
     <!-- Step 3: Form with Validation -->
     <template v-slot:item.3>
       <v-card id="app" title="Completa tus datos" flat>
-        <v-form ref="stepForm3" v-model="validStep3">
-          <Form @input="validateForm" />
+        <v-form ref="formRef" v-model="validStep3" @update:model-value="(value) => (validStep3 = value)">
+          <Form @submit="validateForm" />
         </v-form>
         <v-btn id="buttons" @click="previousStep">Back</v-btn>
       </v-card>
@@ -68,13 +68,17 @@ export default {
       this.validStep1 = !!selectedCity;
     },
     validateForm() {
-      const formRef = this.$refs.form; // Get the form reference
-      if (formRef) {
-        const isValid = formRef.validate(); // Call validate only if the form exists
-        this.validStep3 = isValid; // Set validation status
-      } else {
-        console.error("Form reference is not available.");
-      }
+      const validateForm = () => {
+        if (formRef.value) {
+          const isValid = formRef.value.validate();
+          validStep3.value = isValid;
+          return isValid;
+        } else {
+          console.error("Form reference is not available.");
+          return false;
+        }
+      };
+
     },
     handleCardSelection(valid) {
       this.validStep2 = true;
